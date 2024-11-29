@@ -126,13 +126,36 @@ const rotationSpeed = 0.15;
 // Math.PI/8 = 22.5 degrés
 // Math.PI/6 = 30 degrés
 // Math.PI/4 = 45 degrés
-const maxRotation = Math.PI / 4;
+const maxRotation = Math.PI / 3;
 
 // Inclinaison permanente du modèle
 // Valeurs positives = objectif vers le haut
 // Valeurs négatives = objectif vers le bas
 // Math.PI * 0.1 = inclinaison de 18 degrés
-const rotationOffsetX = Math.PI * 0.15;
+
+// OBJECTIF SUIVI 
+const rotationOffsetX = Math.PI * 0.18;
+
+// ---------- ⥥ VARIABLES DE SCROLL ⥥ ----------
+let currentScroll = 0;
+let targetScroll = 0;
+const scrollEase = 0.05; // Vitesse de l'effet de scroll
+
+// Paramètres de zoom au scroll
+const minScale = 1.5; // Échelle minimum du modèle
+const maxScale = 2.5; // Échelle maximum du modèle
+const zoomSpeed = 0.001; // Vitesse du zoom
+
+// Paramètres de zoom pour le texte
+const textMinScale = 1; // Échelle minimum du texte
+const textMaxScale = 1.5; // Échelle maximum du texte
+const textZoomSpeed = 0.0005; // Vitesse du zoom du texte
+const textOffsetY = 30; // Décalage vertical maximum en pixels
+
+// Sélection des éléments de texte
+const textBehind = document.getElementById("text-behind");
+const textBehindBlur = document.getElementById("text-behind-blur");
+const textFront = document.getElementById("text-front");
 
 function updateMousePosition(event) {
   // Calcul de la position relative de la souris (-1 à 1)
@@ -147,6 +170,9 @@ function updateMousePosition(event) {
 document.addEventListener("mousemove", updateMousePosition);
 
 // ---------- ⥥ ANIMATION ⥥ ----------
+const breathingAmplitude = 0.1; // Amplitude du mouvement (0.02 = subtil, 0.1 = fort)
+const breathingSpeed = 0.001;    // Vitesse du mouvement (0.001 = lent, 0.003 = rapide)
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -156,15 +182,30 @@ function animate() {
     currentRotationY += (targetRotationY - currentRotationY) * rotationSpeed;
 
     // Application des rotations au modèle
-    // rotation.x = inclinaison haut/bas
-    // rotation.y = rotation gauche/droite
     model.rotation.x = currentRotationX + rotationOffsetX;
     model.rotation.y = currentRotationY;
 
-    // Animation de respiration
-    const breathingAmplitude = 0.02; // Amplitude du mouvement haut/bas
-    const breathingSpeed = 0.002; // Vitesse de la respiration
+    // Animation de lévitation
     model.position.y = -0.5 + Math.sin(Date.now() * breathingSpeed) * breathingAmplitude;
+
+    // Effet de zoom au scroll pour le modèle
+    currentScroll += (targetScroll - currentScroll) * scrollEase;
+    const modelScale = minScale + currentScroll * zoomSpeed;
+    const clampedModelScale = Math.min(Math.max(modelScale, minScale), maxScale);
+    model.scale.set(clampedModelScale, clampedModelScale, clampedModelScale);
+
+    // Effet de zoom au scroll pour le texte
+    const textScale = textMinScale + currentScroll * textZoomSpeed;
+    const clampedTextScale = Math.min(Math.max(textScale, textMinScale), textMaxScale);
+    
+    // Calcul du décalage vertical basé sur le scroll
+    const scrollRatio = currentScroll / (document.documentElement.scrollHeight - window.innerHeight);
+    const offset = scrollRatio * textOffsetY;
+    
+    // Appliquer l'échelle et le décalage aux éléments de texte
+    textBehind.style.transform = `scale(${clampedTextScale}) translateY(${offset * 1.2}px)`;
+    textBehindBlur.style.transform = `scale(${clampedTextScale}) translateY(${offset * 1.1}px)`;
+    textFront.style.transform = `scale(${clampedTextScale}) translateY(${offset}px)`;
   }
 
   renderer.render(scene, camera);
@@ -174,13 +215,23 @@ animate();
 
 // ---------- ⥥ GESTION DU SCROLL ⥥ ----------
 const logoContainer = document.querySelector(".logo-container");
+const scrollContainer = document.querySelector(".scroll-container");
+const socialsContainer = document.querySelector(".socials");
 
+// Gestion du scroll pour le zoom et l'opacité
 window.addEventListener("scroll", () => {
-  const scrollPosition = window.scrollY;
-  if (scrollPosition > 30) {
+  // Mise à jour de la position de scroll cible
+  targetScroll = window.pageYOffset;
+
+  // Gestion de l'opacité des éléments
+  if (targetScroll > 30) {
     logoContainer.style.opacity = "0";
+    scrollContainer.style.opacity = "0";
+    socialsContainer.style.opacity = "0";
   } else {
     logoContainer.style.opacity = "1";
+    scrollContainer.style.opacity = "1";
+    socialsContainer.style.opacity = "1";
   }
 });
 

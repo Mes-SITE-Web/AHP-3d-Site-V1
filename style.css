@@ -175,11 +175,12 @@ body {
 .socials {
   position: absolute;
   top: 35vh;
-  left: 20px; /* Distance par rapport au bord gauche */
+  left: 20px;
   display: flex;
-  flex-direction: column; /* Empile les icônes verticalement */
+  flex-direction: column;
   align-items: center;
-  gap: 30px; /* Espace entre les icônes */
+  gap: 30px;
+  transition: opacity 0.3s ease;
 }
 
 .socials i {
@@ -213,15 +214,12 @@ a:hover {
 
 /* #region ---------- ⥥ SCROLL DOWN ⥥ ---------- */
 .scroll-container {
-  width: 100px;
-  height: 160px;
-  margin: 50px auto;
-  position: relative;
-  perspective: 1000px;
-  top: 85vh;
-  z-index: 200;
-  pointer-events: none;
-  transition: opacity 0.3s ease-in-out;
+  position: fixed;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.3s ease;
 }
 
 /* .scroll-container {
@@ -333,6 +331,15 @@ a:hover {
   );
   filter: blur(8px);
   animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+.scroll-down {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.3s ease;
 }
 
 @keyframes scrollBall {
