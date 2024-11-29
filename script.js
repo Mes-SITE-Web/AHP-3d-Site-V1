@@ -1,34 +1,12 @@
+// ---------- ⥥ IMPORT ⥥ ----------
 import * as THREE from "https://cdn.skypack.dev/three@0.124.0";
-import { RGBELoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/RGBELoader.js";
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/GLTFLoader.js";
+import { RGBELoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/RGBELoader.js";
 
-// Récupération des éléments HTML
-const textBehind = document.getElementById("text-behind");
-const textFront = document.getElementById("text-front");
-const textBehindBlur = document.getElementById("text-behind-blur");
+// ---------- ⥥ CANVAS ⥥ ----------
 const canvasRect = document.getElementById("canvas");
-const logoContainer = document.querySelector(".logo-container");
 
-// ---------- ⥥ CONSTANTES POUR LES ANIMATIONS ⥥ ----------
-const parallaxScaling1 = 0.0003; // Texte
-const parallaxScaling2 = 0.0002; // Canvas
-const parallaxScaling3 = 0.0000002; // Rotation globale
-
-let currentScroll = 0,
-  targetScroll = 0,
-  theta1 = 0,
-  ease = 0.001;
-
-// ---------- ⥥ INITIALISATION DE LA SCÈNE THREE.JS ⥥ ----------
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvasRect,
-  antialias: true,
-  alpha: true,
-});
-
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-
+// ---------- ⥥ SCENE ⥥ ----------
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
@@ -46,74 +24,83 @@ const group = new THREE.Group();
 scene.add(group);
 
 // Lumières
+const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.2);
+scene.add(ambientLight);
+
 const pointlight1 = new THREE.PointLight(0x8376eb, 1, 0);
-// (Couleurs, Intensité et Distance) 
 pointlight1.position.set(0, 3, 2);
-// x,y et z - Position : Située au-dessus (y=3) et légèrement en avant (z=2).
 group.add(pointlight1);
 
 const pointlight2 = new THREE.PointLight(0xf35d5d, 0.3, 0);
 pointlight2.position.set(1, 4, 2);
 group.add(pointlight2);
 
-const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.2);
-scene.add(ambientLight);
+// ---------- ⥥ SIZES ⥥ ----------
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+};
 
-// Caméra
+// ---------- ⥥ CAMERA ⥥ ----------
+// Paramètres de la caméra
+// new THREE.PerspectiveCamera(fov, aspect, near, far)
+// fov : angle de vision vertical en degrés
+// aspect : rapport largeur/hauteur de la caméra
+// near : distance minimale de rendu
+// far : distance maximale de rendu
 const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+  45, // Angle de vision vertical
+  sizes.width / sizes.height, // Rapport largeur/hauteur
+  0.1, // Distance minimale de rendu
+  1000 // Distance maximale de rendu
 );
-camera.position.set(0, 1, 10);
-group.add(camera);
 
-// Fonction pour gérer le redimensionnement
-function onWindowResize() {
-  // Mettre à jour les dimensions de la caméra
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+// Position de la caméra
+// camera.position.set(x, y, z)
+// x : gauche(-) / droite(+)
+// y : bas(-) / haut(+)
+// z : proche(-) / loin(+)
+camera.position.set(0, 0, 8);
 
-  // Mettre à jour le renderer
-  renderer.setSize(window.innerWidth, window.innerHeight);
+// Point que regarde la caméra
+// camera.lookAt(x, y, z)
+// x : gauche(-) / droite(+)
+// y : bas(-) / haut(+)
+// z : avant(-) / arrière(+)
+camera.lookAt(0, -0.5, 0);
 
-  // Mettre à jour les dimensions du modèle si nécessaire
-  if (model) {
-    const scale = Math.min(window.innerWidth, window.innerHeight) * 0.001;
-    model.scale.set(scale, scale, scale);
-  }
-}
+// ---------- ⥥ RENDERER ⥥ ----------
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvasRect,
+  antialias: true,
+  alpha: true,
+});
 
-// Ajouter l'écouteur d'événement pour le redimensionnement
-window.addEventListener('resize', onWindowResize);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(sizes.width, sizes.height);
 
+// ---------- ⥥ MODEL ⥥ ----------
 // Charger le modèle GLB
 const loader = new GLTFLoader();
-let model; // Déclarer model en dehors de la fonction pour y accéder globalement
+let model;
 
-loader.load("./models/camsuper.glb", (gltf) => {
+loader.load("./models/Camera_Super8.glb", (gltf) => {
   model = gltf.scene;
+  
+  // Ajuster l'échelle et la position initiale du modèle
+  model.scale.set(1.5, 1.5, 1.5);
+  model.position.set(0, -0.5, 0); // Abaisser légèrement le modèle
+  model.rotation.set(0, 0, 0);
 
-  // Ajuster l'échelle du modèle de manière responsive
-  const scale = Math.min(window.innerWidth, window.innerHeight) * 0.001;
-  model.scale.set(0.5, 0.5, 0.5);
+  // Ajuster la rotation initiale pour que l'objectif soit bien orienté
+  model.rotation.x = Math.PI * 0.1; // Incliner légèrement vers le haut
 
-  // Position et rotation du modèle
-  model.position.set(0, 0, 0);
-  model.rotation.set(0, Math.PI, 0);
-
-  // Appliquer des matériaux réalistes
   model.traverse((child) => {
-    if (child.isMesh && child.material) {
-      const mat = child.material;
-      mat.envMap = scene.environment;
-      mat.envMapIntensity = 5;
-      mat.roughness = 3;
-      mat.metalness = 0;
-      if (mat.emissive) {
-        mat.emissiveIntensity = 50;
-      }
+    if (child.isMesh) {
+      child.material.envMapIntensity = 5;
+      child.material.needsUpdate = true;
+      child.castShadow = true;
+      child.receiveShadow = true;
     }
   });
 
@@ -121,133 +108,92 @@ loader.load("./models/camsuper.glb", (gltf) => {
 });
 
 // ---------- ⥥ ANIMATIONS DE PARALLAXE ⥥ ----------
-function updateScale() {
-  let rect = canvasRect.getBoundingClientRect();
-  let startScrollPosition = window.pageYOffset + rect.top;
-  let endScrollPosition = window.pageYOffset + rect.bottom;
+let mouseX = 0;
+let mouseY = 0;
+let targetRotationX = 0;
+let targetRotationY = 0;
+let currentRotationX = 0;
+let currentRotationY = 0;
+const windowHalfX = window.innerWidth / 2;
+const windowHalfY = window.innerHeight / 2;
 
-  if (
-    targetScroll + window.innerHeight < startScrollPosition ||
-    targetScroll > endScrollPosition
-  ) {
-    return;
-  }
+// Vitesse de suivi du curseur
+// Plus la valeur est basse, plus le mouvement est fluide
+// Valeurs conseillées entre 0.05 et 0.3
+const rotationSpeed = 0.15;
 
-  currentScroll += (targetScroll - currentScroll) * ease;
+// Angle maximum de rotation
+// Math.PI/8 = 22.5 degrés
+// Math.PI/6 = 30 degrés
+// Math.PI/4 = 45 degrés
+const maxRotation = Math.PI / 4;
 
-  // Échelle et rotation
-  let scaleValue1 = 1 + currentScroll * parallaxScaling1;
-  let scaleValue2 = 1 + currentScroll * parallaxScaling2;
+// Inclinaison permanente du modèle
+// Valeurs positives = objectif vers le haut
+// Valeurs négatives = objectif vers le bas
+// Math.PI * 0.1 = inclinaison de 18 degrés
+const rotationOffsetX = Math.PI * 0.15;
 
-  textBehind.style.transform = `scale(${scaleValue1})`;
-  textFront.style.transform = `scale(${scaleValue1})`;
-  textBehindBlur.style.transform = `scale(${scaleValue1})`;
-  canvasRect.style.transform = `scale(${scaleValue2})`;
-
-  theta1 += currentScroll * parallaxScaling3;
-  setTimeout(updateScale, 1000 / 60);
-}
-
-  // SCROLL DOWN OPACITE
-const scrollContainer = document.querySelector(".scroll-container");
-
-window.addEventListener("scroll", () => {
-  const scrollY = window.scrollY; // Position verticale du scroll
-  const maxOpacity = 1; // Opacité initiale
-  const fadeStart = 50; // Position où commence la disparition
-  const fadeEnd = 200; // Position où l'opacité devient 0
-
-  let opacity = maxOpacity;
-  if (scrollY > fadeStart) {
-    opacity = Math.max(
-      0,
-      maxOpacity - (scrollY - fadeStart) / (fadeEnd - fadeStart)
-    );
-  }
-  scrollContainer.style.opacity = opacity;
-});
-
-// Variables pour le mouvement de la souris
-window.addEventListener("scroll", () => {
-  targetScroll = window.pageYOffset;
-  updateScale();
-});
-updateScale();
-
-// Variables pour le mouvement de la souris
-let mouseX = 0,
-  mouseY = 0;
-let targetMouseX = 0,
-  targetMouseY = 0;
-const mouseEase = 0.1;
-
-// ---------- ⥥ EFFETS DE MOUVEMENT À LA SOURIS ⥥ ----------
-document.addEventListener("mousemove", (event) => {
-  const windowHalfX = window.innerWidth / 2;
-  const windowHalfY = window.innerHeight / 2;
-
+function updateMousePosition(event) {
+  // Calcul de la position relative de la souris (-1 à 1)
   mouseX = (event.clientX - windowHalfX) / windowHalfX;
   mouseY = (event.clientY - windowHalfY) / windowHalfY;
 
-  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-});
+  // Calcul des rotations cibles
+  targetRotationY = mouseX * maxRotation; // Rotation horizontale
+  targetRotationX = mouseY * maxRotation * 0.7; // Rotation verticale (réduite à 70%)
+}
 
-// Gestion de l'opacité du logo au scroll
+document.addEventListener("mousemove", updateMousePosition);
+
+// ---------- ⥥ ANIMATION ⥥ ----------
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (model) {
+    // Interpolation douce des rotations
+    currentRotationX += (targetRotationX - currentRotationX) * rotationSpeed;
+    currentRotationY += (targetRotationY - currentRotationY) * rotationSpeed;
+
+    // Application des rotations au modèle
+    // rotation.x = inclinaison haut/bas
+    // rotation.y = rotation gauche/droite
+    model.rotation.x = currentRotationX + rotationOffsetX;
+    model.rotation.y = currentRotationY;
+
+    // Animation de respiration
+    const breathingAmplitude = 0.02; // Amplitude du mouvement haut/bas
+    const breathingSpeed = 0.002; // Vitesse de la respiration
+    model.position.y = -0.5 + Math.sin(Date.now() * breathingSpeed) * breathingAmplitude;
+  }
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// ---------- ⥥ GESTION DU SCROLL ⥥ ----------
+const logoContainer = document.querySelector(".logo-container");
+
 window.addEventListener("scroll", () => {
   const scrollPosition = window.scrollY;
-  if (scrollPosition > 50) { // Commence à disparaître après 50px de scroll
+  if (scrollPosition > 30) {
     logoContainer.style.opacity = "0";
   } else {
     logoContainer.style.opacity = "1";
   }
 });
 
-// ---------- ⥥ ANIMATION PRINCIPALE DE LA SCÈNE ⥥ ----------
-function update() {
-  theta1 += 0.0025;
-
-  // Lissage des mouvements de la souris
-  targetMouseX += (mouseX - targetMouseX) * mouseEase;
-  targetMouseY += (mouseY - targetMouseY) * mouseEase;
-
-  // Mise à jour des lumières
-  pointlight1.position.x = Math.sin(theta1 + 1) * 5;
-  pointlight1.position.y = Math.cos(theta1) * 2;
-  pointlight1.position.z = Math.cos(theta1) * 5;
-
-  pointlight2.position.x = -Math.sin(theta1) * 5;
-  pointlight2.position.y = -Math.cos(theta1 + 1) * 2;
-  pointlight2.position.z = -Math.cos(theta1) * 5;
-  
-
-  // Effets parallaxe
-  // group.rotation.y += 0.0006;
-  // group.rotation.x = targetMouseY * 0.1;
-  // group.rotation.y += targetMouseX * 0.1;
-
-  // Mouvement de la caméra
-  camera.position.x = Math.sin(theta1) * 10 + targetMouseX * 1;
-  camera.position.z = Math.cos(theta1) * 10;
-  camera.lookAt(0, 0, 0);
-}
-
-// Variables pour le mouvement de la souris
-function updateMousePosition() {
-  // Applique les mouvements de souris pour ajuster la position du groupe
-  group.position.x = mouseX * 0.2; // Ajuste le multiplicateur pour l'amplitude
-  group.position.y = mouseY * 0.2; // Ajuste le multiplicateur pour l'amplitude
-
-  // Si tu veux manipuler aussi l'axe Z :
-  // group.position.z = mouseX * 2; // Facultatif pour une profondeur dynamique
-}
-
-function animate() {
-  updateMousePosition(); // Mise à jour de la position avec la souris
-  update();
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-}
-animate();
-
 // ---------- ⥥ REDIMENSIONNEMENT ⥥ ----------
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  if (model) {
+    const scale = Math.min(window.innerWidth, window.innerHeight) * 0.001;
+    model.scale.set(scale, scale, scale);
+  }
+}
+
+window.addEventListener('resize', onWindowResize);
