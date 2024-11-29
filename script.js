@@ -32,7 +32,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("/HDR/abstraitcolorciel01.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("./HDR/abstraitcolorciel01.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
