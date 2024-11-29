@@ -1,0 +1,25 @@
+Ajoutez une animation d'agrandissement/zoom du contenu principal (canvas, titre, etc.) à l'apparition. 
+
+Faites apparaître les éléments (#text-front, #text-behind) en décalage avec une animation de montée et d'opacité progressive.
+
+Ajoutez un effet de balayage (clip-path ou mask) pour révéler le texte.Réduisez son opacité progressivement lorsqu'on commence à scroller.
+
+Ajoutez une animation de fondu rapide pour le retirer complètement après un certain seuil.
+
+Amplifiez les effets de parallaxe sur les textes (#text-front, #text-behind, #text-behind-blur) pour un mouvement subtil et fluide. 
+
+Faites apparaître les icônes socials avec une transition de translation verticale et d'opacité. 
+
+Appliquez une légère "inertie" pour que le mouvement suive un peu avec un délai. 
+
+Optimisation :
+Intégrez des throttling pour les événements de souris et de scroll pour maintenir de bonnes performances.
+
+
+
+  setTimeout(() => {
+    // Réinitialise l'échelle et la position du group
+    group.scale.set(1, 1, 1); // Remet à l'échelle normale
+    group.position.set(0, 0, 0); // Remet à la position initiale
+  }, 800); // Synchronisé avec la fin de l'animation de zoom
+  

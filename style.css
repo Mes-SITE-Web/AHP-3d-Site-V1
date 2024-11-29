@@ -1,0 +1,425 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+:root {
+  --headline-color: white;
+  --background-color: #11151c;
+  --text-color: #c4c4c4;
+  --gene-color: #5f6b96;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  display: flex;
+  /* height: 100%; */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--background-color);
+  font-family: "Open Sans", sans-serif;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* .main-container {
+  scroll-snap-type: y mandatory; 
+  -webkit-overflow-scrolling: touch; 
+} */
+
+
+/* LOGO HAUT GAUCHE AHP  */
+.logo-container {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+.logo {
+  width: 2vw;
+  min-width: 15px;
+  max-width: 60px;
+  height: auto;
+  color: white;
+  filter: brightness(0) saturate(100%) invert(86%) sepia(0%) saturate(4258%) hue-rotate(249deg) brightness(96%) contrast(84%);
+  transition: filter 0.3s ease;
+  /* cursor: pointer; */
+}
+
+
+/* SECTIONS  */
+#section-1 {
+  scroll-snap-align: start; 
+  height: 100vh; 
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  background-color: var(--background-color);
+  color: var(--headline-color);
+}
+#section-2 {
+  scroll-snap-align: start; 
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  background-color: var(--background-color);
+  color: var(--headline-color);
+}
+
+#section-3 {
+  scroll-snap-align: start; 
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  background-color: var(--background-color);
+  color: var(--headline-color);
+}
+
+
+
+
+.canvas-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.headline-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+#text-behind,
+#text-front,
+#text-behind-blur {
+  font-family: "Roboto", sans-serif;
+  position: absolute;
+  text-align: center;
+  font-size: clamp(24px, 20vw, 200px);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 10px;
+  line-height: 0.8;
+}
+
+#text-behind {
+  /*   font-size: 20px; */
+  color: var(--headline-color);
+  z-index: 1;
+}
+
+#text-behind-blur {
+  color: var(--headline-color);
+  filter: blur(7.5px);
+  -webkit-filter: blur(7.5px);
+  z-index: 0;
+}
+
+#text-front {
+  /*  Set text-color to transparent to only show the outline  */
+  color: transparent;
+  -webkit-text-stroke: 2px var(--headline-color);
+  z-index: 3;
+}
+
+/* Less relevant code */
+
+.more-content {
+  height: 200vh;
+  width: 100vw;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  top: 5%;
+  height: 90%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  z-index: 3;
+}
+
+.title {
+  font-size: 0.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+  font-weight: 500;
+}
+
+
+
+.socials {
+  position: absolute;
+  top: 35vh;
+  left: 20px; /* Distance par rapport au bord gauche */
+  display: flex;
+  flex-direction: column; /* Empile les icônes verticalement */
+  align-items: center;
+  gap: 30px; /* Espace entre les icônes */
+}
+
+.socials i {
+  display: flex;
+  align-items: center;
+  font-size: 25px; /* Taille de l'icône */
+  color: var(--text-color); /* Couleur de l'icône */
+  transition: all 0.5s ease-in-out;
+  transform: scale(1); /* Échelle par défaut */
+}
+
+.socials i:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0px 0px 5px rgba(255, 255, 255, 1));
+}
+
+p {
+  width: 300px;
+  font-size: 0.75rem;
+}
+
+a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: all 0.5s ease-in-out;
+}
+
+a:hover {
+  filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 0.9));
+}
+
+/* #region ---------- ⥥ SCROLL DOWN ⥥ ---------- */
+.scroll-container {
+  width: 100px;
+  height: 160px;
+  margin: 50px auto;
+  position: relative;
+  perspective: 1000px;
+  top: 85vh;
+  z-index: 200;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* .scroll-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+} */
+
+.chevron-stack {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 60px;
+  animation: floatArrows 2.5s ease-in-out infinite;
+  top: 0;
+}
+
+.chevron {
+  position: absolute;
+  opacity: 0;
+  animation: arrowPulse 5s ease-in-out infinite;
+  left: 0;
+  right: 0;
+}
+
+.chevron:before,
+.chevron:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 90%;
+  width: 50%;
+  background: var(--text-color);
+}
+
+.chevron:before {
+  left: 0;
+  transform: skewY(30deg);
+}
+
+.chevron:after {
+  right: 0;
+  transform: skewY(-30deg);
+}
+
+.chevron:nth-child(1) {
+  bottom: 48px;
+  width: 15px;
+  height: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: arrowPulse 2.5s ease-in-out infinite;
+}
+
+.chevron:nth-child(2) {
+  top: 15px;
+  width: 20px;
+  height: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: arrowPulse 2.5s ease-in-out infinite 0.2s;
+}
+
+.chevron:nth-child(3) {
+  top: 28px;
+  width: 15px;
+  height: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: arrowPulse 2.5s ease-in-out infinite 0.4s;
+}
+
+.scroll-ring {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25px;
+  height: 45px;
+  border: 2px solid;
+  color: var(--text-color);
+  border-radius: 30px;
+}
+
+.scroll-ball {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 7px;
+  height: 10px;
+  background: var(--text-color);
+  border-radius: 50%;
+  animation: scrollBall 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+.glow {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 136, 0.2) 0%,
+    rgba(0, 255, 136, 0) 70%
+  );
+  filter: blur(8px);
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes scrollBall {
+  0%,
+  15% {
+    top: 8px;
+  }
+  50% {
+    top: 30px;
+  }
+  85%,
+  100% {
+    top: 8px;
+  }
+}
+
+@keyframes arrowPulse {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes floatArrows {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+/* #endregion */
+
+/* ⥥ ---------- PERSO BARRE DEFILEMENT VERTICAL ---------- ⥥ */
+
+/* Style général de la barre de défilement */
+::-webkit-scrollbar {
+  width: 10px; /* Largeur de la barre de défilement */
+}
+
+/* Style de la piste (track) de la barre de défilement */
+::-webkit-scrollbar-track {
+  background: #1b1e2b; /* Couleur de fond de la piste */
+  border-radius: 2px; /* Coins arrondis */
+}
+
+/* Style du pouce (thumb) de la barre de défilement */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #5b648b, #5c6bab); /* Dégradé bleu */
+  background: var(--background-color); /* Dégradé bleu */
+  border-radius: 3px; /* Coins arrondis */
+}
+
+/* Style au survol du pouce */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4a719b, #1f3d5e); /* Dégradé bleu */
+}
+
+/* Optionnel : style au clic actif */
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg,
+    #003f7f,
+    #002a5f
+  ); /* Couleur encore plus sombre */
+}
+
+/* Support pour Firefox avec scrollbar-width */
+/* * {
+  scrollbar-width: thin; 
+  scrollbar-color: #ff0000 #f0f0f0; 
+} */

@@ -1,0 +1,24 @@
+/* Styles pour le loader */
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #11151c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #979ca4;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+}
