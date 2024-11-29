@@ -69,17 +69,39 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 1, 10);
 group.add(camera);
 
+// Fonction pour gérer le redimensionnement
+function onWindowResize() {
+  // Mettre à jour les dimensions de la caméra
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  // Mettre à jour le renderer
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // Mettre à jour les dimensions du modèle si nécessaire
+  if (model) {
+    const scale = Math.min(window.innerWidth, window.innerHeight) * 0.001;
+    model.scale.set(scale, scale, scale);
+  }
+}
+
+// Ajouter l'écouteur d'événement pour le redimensionnement
+window.addEventListener('resize', onWindowResize);
+
 // Charger le modèle GLB
 const loader = new GLTFLoader();
-loader.load("./models/camsuper.glb", (gltf) => {
-  const model = gltf.scene;
+let model; // Déclarer model en dehors de la fonction pour y accéder globalement
 
-  // Ajuster l'échelle du modèle
-  // model.scale.set(15, 15, 15);
-  // model.scale.set(10, 10, 10);
-  // model.scale.set(5, 5, 5);
-  //  model.scale.set(2.3, 2.3, 2.3);
-   model.scale.set(0.5, 0.5, 0.5);
+loader.load("./models/camsuper.glb", (gltf) => {
+  model = gltf.scene;
+
+  // Ajuster l'échelle du modèle de manière responsive
+  const scale = Math.min(window.innerWidth, window.innerHeight) * 0.001;
+  model.scale.set(0.5, 0.5, 0.5);
+
+  // Position et rotation du modèle
+  model.position.set(0, 0, 0);
+  model.rotation.set(0, Math.PI, 0);
 
   // Appliquer des matériaux réalistes
   model.traverse((child) => {
@@ -95,7 +117,7 @@ loader.load("./models/camsuper.glb", (gltf) => {
     }
   });
 
-  group.add(model);
+  scene.add(model);
 });
 
 // ---------- ⥥ ANIMATIONS DE PARALLAXE ⥥ ----------
@@ -229,10 +251,3 @@ function animate() {
 animate();
 
 // ---------- ⥥ REDIMENSIONNEMENT ⥥ ----------
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-

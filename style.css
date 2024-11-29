@@ -423,3 +423,40 @@ a:hover {
   scrollbar-width: thin; 
   scrollbar-color: #ff0000 #f0f0f0; 
 } */
+
+/* Media Queries pour la responsivité */
+@media screen and (max-width: 768px) {
+  .logo {
+    width: 4vw;
+    min-width: 25px;
+  }
+
+  .headline-container {
+    font-size: clamp(2rem, 8vw, 4rem);
+  }
+
+  .scroll-container {
+    transform: scale(0.8);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .logo {
+    width: 6vw;
+    min-width: 20px;
+  }
+
+  .headline-container {
+    font-size: clamp(1.5rem, 7vw, 3rem);
+  }
+
+  .scroll-container {
+    transform: scale(0.7);
+  }
+
+  #text-behind,
+  #text-behind-blur,
+  #text-front {
+    line-height: 1.2;
+  }
+}
