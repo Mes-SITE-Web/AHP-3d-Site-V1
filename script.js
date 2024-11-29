@@ -10,7 +10,7 @@ const canvasRect = document.getElementById("canvas");
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("../HDR/abstraitcolorciel01.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("./HDR/abstraitcolorciel01.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
@@ -94,7 +94,7 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 const loader = new GLTFLoader();
 let model;
 
-loader.load("../models/Camera_Super8-details01.glb", (gltf) => {
+loader.load("./models/Camera_Super8-details01.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
