@@ -71,36 +71,51 @@ camera.lookAt(0, -0.5, 0);
 
 // ---------- ⥥ RENDERER ⥥ ----------
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvasRect,
+  canvas: document.querySelector("#canvas"),
   antialias: true,
   alpha: true,
+  powerPreference: "high-performance",
+  stencil: false
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(sizes.width, sizes.height);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// EXPOSITION 
+renderer.toneMappingExposure = 1.5;
+// Amélioration des ombres
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// Optimisation du rendu
+renderer.outputEncoding = THREE.sRGBEncoding;
 
 // ---------- ⥥ MODEL ⥥ ----------
 // Charger le modèle GLB
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/Camera_Super8.glb", (gltf) => {
+loader.load("./models/Camera_Super8-details01.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
   model.scale.set(1.5, 1.5, 1.5);
-  model.position.set(0, -0.5, 0); // Abaisser légèrement le modèle
+  model.position.set(0, -0.5, 0);
   model.rotation.set(0, 0, 0);
 
   // Ajuster la rotation initiale pour que l'objectif soit bien orienté
-  model.rotation.x = Math.PI * 0.1; // Incliner légèrement vers le haut
+  model.rotation.x = Math.PI * 0.1;
 
   model.traverse((child) => {
     if (child.isMesh) {
-      child.material.envMapIntensity = 5;
+      child.material.envMapIntensity = 0.1; // Intensité des reflets
       child.material.needsUpdate = true;
       child.castShadow = true;
       child.receiveShadow = true;
+      
+      // Optimisation des matériaux
+      if (child.material.map) {
+        child.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      }
     }
   });
 
@@ -134,7 +149,7 @@ const maxRotation = Math.PI / 3;
 // Math.PI * 0.1 = inclinaison de 18 degrés
 
 // OBJECTIF SUIVI 
-const rotationOffsetX = Math.PI * 0.18;
+const rotationOffsetX = Math.PI * 0.1;
 
 // ---------- ⥥ VARIABLES DE SCROLL ⥥ ----------
 let currentScroll = 0;
@@ -143,12 +158,12 @@ const scrollEase = 0.05; // Vitesse de l'effet de scroll
 
 // Paramètres de zoom au scroll
 const minScale = 1.5; // Échelle minimum du modèle
-const maxScale = 2.5; // Échelle maximum du modèle
+const maxScale = 2; // Échelle maximum du modèle
 const zoomSpeed = 0.001; // Vitesse du zoom
 
 // Paramètres de zoom pour le texte
 const textMinScale = 1; // Échelle minimum du texte
-const textMaxScale = 1.5; // Échelle maximum du texte
+const textMaxScale = 1.1; // Échelle maximum du texte
 const textZoomSpeed = 0.0005; // Vitesse du zoom du texte
 const textOffsetY = 30; // Décalage vertical maximum en pixels
 
