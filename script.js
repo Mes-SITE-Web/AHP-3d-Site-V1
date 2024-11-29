@@ -71,7 +71,7 @@ group.add(camera);
 
 // Charger le modèle GLB
 const loader = new GLTFLoader();
-loader.load("/models/camsuper.glb", (gltf) => {
+loader.load("./models/camsuper.glb", (gltf) => {
   const model = gltf.scene;
 
   // Ajuster l'échelle du modèle
