@@ -82,7 +82,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(sizes.width, sizes.height);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 // EXPOSITION 
-renderer.toneMappingExposure = 1.5;
+renderer.toneMappingExposure = 1;
 // Amélioration des ombres
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -94,7 +94,7 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/Camera_Super8-details01.glb", (gltf) => {
+loader.load("./models/fade-btn.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
