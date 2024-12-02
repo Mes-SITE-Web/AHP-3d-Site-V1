@@ -10,7 +10,7 @@ const canvasRect = document.getElementById("canvas");
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("./HDR/abstraitcolorciel01.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("./HDR/qwantani_sunset_2k.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
@@ -85,12 +85,54 @@ renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verr
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+// ---------- ⥥ TEXTURES ⥥ ----------
+const textureLoader = new THREE.TextureLoader();
+
+// OPACITE 
+
+// Charger les textures pour les imperfections
+const roughnessMap = textureLoader.load(
+  './models/textures/finger-lentille-opacity.jpg',
+  function(texture) {
+    console.log('Texture rayures chargée');
+    texture.encoding = THREE.sRGBEncoding;
+    texture.flipY = false;
+  },
+  undefined,
+  function(err) {
+    console.error('Erreur chargement texture rayures:', err);
+  }
+);
+// NORMAL
+
+const normalMap = textureLoader.load(
+  './models/textures/lentille-normal.jpg',
+  function(texture) {
+    console.log('Texture normal map chargée');
+    texture.encoding = THREE.LinearEncoding;
+    texture.flipY = false;
+  },
+  undefined,
+  function(err) {
+    console.error('Erreur chargement normal map:', err);
+  }
+);
+
+// Ajuster les paramètres des textures
+roughnessMap.repeat.set(0.3, 0.3);
+// RAYURES 
+normalMap.repeat.set(0.3, 0.3);
+// FINGERS 
+// normalMap.repeat.set(1, 1);
+roughnessMap.wrapS = roughnessMap.wrapT = THREE.RepeatWrapping;
+normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
+
 // ---------- ⥥ MODEL ⥥ ----------
 // Charger le modèle GLB
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/lentille-glass.glb", (gltf) => {
+loader.load("./models/lentille-glass02.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
@@ -104,25 +146,29 @@ loader.load("./models/lentille-glass.glb", (gltf) => {
   model.traverse((child) => {
     if (child.isMesh) {
       // Vérifier si c'est la lentille
-      if (child.name.toLowerCase().includes('glass') || child.name.toLowerCase().includes('lens') || child.name.toLowerCase().includes('lentille')) {
-        // Créer un nouveau matériau pour la lentille
-        child.material = new THREE.MeshPhysicalMaterial({
-          transmission: 0.95,  // Transparence type verre
-          thickness: 0.5,     // Épaisseur du verre
-          roughness: 0.1,     // Surface lisse
-          clearcoat: 1.0,     // Couche de vernis
-          clearcoatRoughness: 0.1,
-          metalness: 0,
+      if (child.name === "Lentille") {
+        // Configuration avancée pour le verre
+        const material = new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(0.0, 0.0, 0.0),  // Couleur noire
+          roughness: 2,                         // Augmenter la rugosité de base
+          metalness: 0,                           // Pas de métal
           transparent: true,
-          opacity: 0.7,
-          envMapIntensity: 1.5,
-          side: THREE.DoubleSide
+          opacity: 0.8,                          // Contrôle de la transparence
+          clearcoat: 0.8,                          // Effet verre
+          side: THREE.DoubleSide,
+          roughnessMap: roughnessMap,            // Texture pour les rayures
+          normalMap: normalMap,                  // Texture pour le relief
+          normalScale: new THREE.Vector2(0.05, 0.05)   // Augmenter l'intensité du relief
         });
+
+        // Appliquer le nouveau matériau
+        child.material = material;
       } else {
         // Pour les autres matériaux
         child.material.envMapIntensity = 0.1;
       }
 
+      // Paramètres communs
       child.material.needsUpdate = true;
       child.castShadow = true;
       child.receiveShadow = true;
