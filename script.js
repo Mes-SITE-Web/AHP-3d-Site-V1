@@ -103,24 +103,15 @@ loader.load("./models/lentille-glass.glb", (gltf) => {
 
   model.traverse((child) => {
     if (child.isMesh) {
-      // Configuration spéciale pour les parties en verre
-      if (child.name.toLowerCase().includes('glass') || child.name.toLowerCase().includes('lens')) {
-        child.material.transparent = true;
-        child.material.opacity = 0.3;
-        child.material.roughness = 0.1;
-        child.material.metalness = 0;
-        child.material.envMapIntensity = 1;
-        child.material.refractionRatio = 0.98;
-      } else {
-        // Configuration standard pour les autres matériaux
-        child.material.envMapIntensity = 0.1;
-      }
-      
+      // Préserver les matériaux de Blender tout en optimisant le rendu
       child.material.needsUpdate = true;
       child.castShadow = true;
       child.receiveShadow = true;
       
-      // Optimisation des matériaux
+      // Ajuster l'intensité de l'environnement pour tous les matériaux
+      child.material.envMapIntensity = 0.1;
+      
+      // Optimisation des textures
       if (child.material.map) {
         child.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
       }
