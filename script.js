@@ -103,13 +103,29 @@ loader.load("./models/lentille-glass.glb", (gltf) => {
 
   model.traverse((child) => {
     if (child.isMesh) {
-      // Préserver les matériaux de Blender tout en optimisant le rendu
+      // Vérifier si c'est la lentille
+      if (child.name.toLowerCase().includes('glass') || child.name.toLowerCase().includes('lens') || child.name.toLowerCase().includes('lentille')) {
+        // Créer un nouveau matériau pour la lentille
+        child.material = new THREE.MeshPhysicalMaterial({
+          transmission: 0.95,  // Transparence type verre
+          thickness: 0.5,     // Épaisseur du verre
+          roughness: 0.1,     // Surface lisse
+          clearcoat: 1.0,     // Couche de vernis
+          clearcoatRoughness: 0.1,
+          metalness: 0,
+          transparent: true,
+          opacity: 0.7,
+          envMapIntensity: 1.5,
+          side: THREE.DoubleSide
+        });
+      } else {
+        // Pour les autres matériaux
+        child.material.envMapIntensity = 0.1;
+      }
+
       child.material.needsUpdate = true;
       child.castShadow = true;
       child.receiveShadow = true;
-      
-      // Ajuster l'intensité de l'environnement pour tous les matériaux
-      child.material.envMapIntensity = 0.1;
       
       // Optimisation des textures
       if (child.material.map) {
