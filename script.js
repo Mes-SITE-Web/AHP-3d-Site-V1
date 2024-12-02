@@ -71,30 +71,26 @@ camera.lookAt(0, -0.5, 0);
 
 // ---------- ⥥ RENDERER ⥥ ----------
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector("#canvas"),
+  canvas: canvasRect,
   antialias: true,
   alpha: true,
   powerPreference: "high-performance",
-  stencil: false
 });
-
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-// EXPOSITION 
-renderer.toneMappingExposure = 1;
-// Amélioration des ombres
+renderer.toneMappingExposure = 1.5;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verre
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-// Optimisation du rendu
-renderer.outputEncoding = THREE.sRGBEncoding;
 
 // ---------- ⥥ MODEL ⥥ ----------
 // Charger le modèle GLB
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/fade-btn.glb", (gltf) => {
+loader.load("./models/lentille-glass.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
@@ -107,7 +103,19 @@ loader.load("./models/fade-btn.glb", (gltf) => {
 
   model.traverse((child) => {
     if (child.isMesh) {
-      child.material.envMapIntensity = 0.1; // Intensité des reflets
+      // Configuration spéciale pour les parties en verre
+      if (child.name.toLowerCase().includes('glass') || child.name.toLowerCase().includes('lens')) {
+        child.material.transparent = true;
+        child.material.opacity = 0.3;
+        child.material.roughness = 0.1;
+        child.material.metalness = 0;
+        child.material.envMapIntensity = 1;
+        child.material.refractionRatio = 0.98;
+      } else {
+        // Configuration standard pour les autres matériaux
+        child.material.envMapIntensity = 0.1;
+      }
+      
       child.material.needsUpdate = true;
       child.castShadow = true;
       child.receiveShadow = true;
