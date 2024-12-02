@@ -10,7 +10,7 @@ const canvasRect = document.getElementById("canvas");
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("./HDR/qwantani_sunset_2k.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("/AHP-3d-Site-V1/HDR/qwantani_sunset_2k.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
@@ -92,7 +92,7 @@ const textureLoader = new THREE.TextureLoader();
 
 // Charger les textures pour les imperfections
 const roughnessMap = textureLoader.load(
-  './models/textures/finger-lentille-opacity.jpg',
+  '/AHP-3d-Site-V1/models/textures/finger-lentille-opacity.jpg',
   function(texture) {
     console.log('Texture rayures chargée');
     texture.encoding = THREE.sRGBEncoding;
@@ -106,7 +106,7 @@ const roughnessMap = textureLoader.load(
 // NORMAL
 
 const normalMap = textureLoader.load(
-  './models/textures/lentille-normal.jpg',
+  '/AHP-3d-Site-V1/models/textures/lentille-normal.jpg',
   function(texture) {
     console.log('Texture normal map chargée');
     texture.encoding = THREE.LinearEncoding;
@@ -132,7 +132,7 @@ normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/lentille-glass02.glb", (gltf) => {
+loader.load("/AHP-3d-Site-V1/models/lentille-glass02.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
