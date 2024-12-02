@@ -92,7 +92,7 @@ const textureLoader = new THREE.TextureLoader();
 
 // Charger les textures pour les imperfections
 const roughnessMap = textureLoader.load(
-  '/models/textures/finger-lentille-opacity.jpg',
+  './models/textures/finger-lentille-opacity.jpg',
   function(texture) {
     console.log('Texture rayures chargée');
     texture.encoding = THREE.sRGBEncoding;
