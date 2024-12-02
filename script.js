@@ -10,7 +10,7 @@ const canvasRect = document.getElementById("canvas");
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("./HDR/qwantani_sunset_2k.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("./HDR/abstraitcolorciel01.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
