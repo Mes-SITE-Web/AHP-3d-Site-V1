@@ -4,7 +4,7 @@
 
 :root {
   --headline-color: white;
-  --background-color: #11151c;
+  --background-color: #11151cba;
   --text-color: #c4c4c4;
   --gene-color: #5f6b96;
 }
@@ -220,6 +220,7 @@ a:hover {
   transform: translateX(-50%);
   z-index: 10;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 /* .scroll-container {

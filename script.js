@@ -10,7 +10,7 @@ const canvasRect = document.getElementById("canvas");
 const scene = new THREE.Scene();
 
 // Charger l'environnement HDRI
-const hdrEquirect = new RGBELoader().load("./HDR/abstraitcolorciel01.hdr", (texture) => {
+const hdrEquirect = new RGBELoader().load("./HDR/hdri-Bleu-panoramas.hdr", (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.encoding = THREE.RGBEEncoding;
   scene.environment = texture;
@@ -24,14 +24,14 @@ const group = new THREE.Group();
 scene.add(group);
 
 // Lumières
-const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.5);
+const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.1);
 scene.add(ambientLight);
 
-const pointlight1 = new THREE.PointLight(0x8376eb, 0.5, 0);
+const pointlight1 = new THREE.PointLight(0x8376eb, 4, 0);
 pointlight1.position.set(0, 3, 2);
 group.add(pointlight1);
 
-const pointlight2 = new THREE.PointLight(0xf35d5d, 0.5, 0);
+const pointlight2 = new THREE.PointLight(0xf35d5d, 3, 0);
 pointlight2.position.set(1, 4, 2);
 group.add(pointlight2);
 
@@ -76,7 +76,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 5;
+// EXPOSITION HDRI ⥥
+renderer.toneMappingExposure = 3;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verre
 renderer.shadowMap.enabled = true;
@@ -148,7 +149,7 @@ loader.load(MODEL_URL, (gltf) => {
         // Configuration avancée pour le verre
         const material = new THREE.MeshPhysicalMaterial({
           color: new THREE.Color(0.0, 0.0, 0.0),  // Couleur noire
-          roughness: 7,                         // Augmenter la rugosité de base
+          roughness: 0,                         // Augmenter la rugosité de base
           metalness: 0,                           // Pas de métal
           transparent: true,
           opacity: 0.8,                          // Contrôle de la transparence
@@ -308,6 +309,48 @@ window.addEventListener("scroll", () => {
     socialsContainer.style.opacity = "1";
   }
 });
+
+// Fonction de défilement optimisée
+function smoothScroll(targetPosition, duration = 500) {  
+  const startPosition = window.pageYOffset;
+  const distance = targetPosition - startPosition;
+  let startTime = null;
+
+  function animation(currentTime) {
+    if (startTime === null) startTime = currentTime;
+    const timeElapsed = currentTime - startTime;
+    const progress = Math.min(timeElapsed / duration, 1);
+    
+    // Fonction d'easing plus rapide
+    const easeOutQuart = progress => 1 - Math.pow(1 - progress, 4);
+
+    window.scrollTo(0, startPosition + (distance * easeOutQuart(progress)));
+
+    if (timeElapsed < duration) {
+      requestAnimationFrame(animation);
+    }
+  }
+
+  requestAnimationFrame(animation);
+}
+
+// Fonction de défilement vers le haut optimisée
+function smoothScrollToTop() {
+  smoothScroll(0);
+}
+
+// Fonction de défilement vers la section 2 optimisée
+function smoothScrollToSection2() {
+  const section2 = document.getElementById('section-2');
+  smoothScroll(section2.offsetTop);
+}
+
+// Sélectionner les éléments et ajouter les événements
+const logoBtn = document.getElementById('logo-btn');
+const scrollBtn = document.getElementById('scroll-btn');
+
+logoBtn.addEventListener('click', smoothScrollToTop);
+scrollBtn.addEventListener('click', smoothScrollToSection2);
 
 // ---------- ⥥ REDIMENSIONNEMENT ⥥ ----------
 function onWindowResize() {
