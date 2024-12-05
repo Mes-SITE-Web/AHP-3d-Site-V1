@@ -24,14 +24,14 @@ const group = new THREE.Group();
 scene.add(group);
 
 // Lumières
-const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.2);
+const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.5);
 scene.add(ambientLight);
 
-const pointlight1 = new THREE.PointLight(0x8376eb, 1, 0);
+const pointlight1 = new THREE.PointLight(0x8376eb, 0.5, 0);
 pointlight1.position.set(0, 3, 2);
 group.add(pointlight1);
 
-const pointlight2 = new THREE.PointLight(0xf35d5d, 0.3, 0);
+const pointlight2 = new THREE.PointLight(0xf35d5d, 0.5, 0);
 pointlight2.position.set(1, 4, 2);
 group.add(pointlight2);
 
@@ -79,7 +79,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.5;
+renderer.toneMappingExposure = 5;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verre
 renderer.shadowMap.enabled = true;
@@ -132,7 +132,7 @@ normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/lentille-glass02.glb", (gltf) => {
+loader.load("./models/Super8-final-01.glb", (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
@@ -150,7 +150,7 @@ loader.load("./models/lentille-glass02.glb", (gltf) => {
         // Configuration avancée pour le verre
         const material = new THREE.MeshPhysicalMaterial({
           color: new THREE.Color(0.0, 0.0, 0.0),  // Couleur noire
-          roughness: 2,                         // Augmenter la rugosité de base
+          roughness: 7,                         // Augmenter la rugosité de base
           metalness: 0,                           // Pas de métal
           transparent: true,
           opacity: 0.8,                          // Contrôle de la transparence
