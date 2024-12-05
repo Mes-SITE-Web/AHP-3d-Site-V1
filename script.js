@@ -56,14 +56,11 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Position de la caméra
-// camera.position.set(x, y, z)
 // x : gauche(-) / droite(+)
 // y : bas(-) / haut(+)
 // z : proche(-) / loin(+)
 camera.position.set(0, 0, 8);
-
 // Point que regarde la caméra
-// camera.lookAt(x, y, z)
 // x : gauche(-) / droite(+)
 // y : bas(-) / haut(+)
 // z : avant(-) / arrière(+)
@@ -302,7 +299,7 @@ window.addEventListener("scroll", () => {
 
   // Gestion de l'opacité des éléments
   if (targetScroll > 30) {
-    logoContainer.style.opacity = "0";
+    logoContainer.style.opacity = "0.3";
     scrollContainer.style.opacity = "0";
     socialsContainer.style.opacity = "0";
   } else {

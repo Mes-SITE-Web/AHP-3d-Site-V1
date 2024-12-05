@@ -35,8 +35,8 @@ body {
 /* LOGO HAUT GAUCHE AHP  */
 .logo-container {
   position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 1rem;
+  left: 2.5rem;
   z-index: 1000;
   opacity: 1;
   transition: opacity 0.3s ease-out;
@@ -50,7 +50,7 @@ body {
   color: white;
   filter: brightness(0) saturate(100%) invert(86%) sepia(0%) saturate(4258%) hue-rotate(249deg) brightness(96%) contrast(84%);
   transition: filter 0.3s ease;
-  /* cursor: pointer; */
+  cursor: pointer;
 }
 
 
