@@ -128,11 +128,12 @@ roughnessMap.wrapS = roughnessMap.wrapT = THREE.RepeatWrapping;
 normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
 
 // ---------- ⥥ MODEL ⥥ ----------
-// Charger le modèle GLB
+// Charger le modèle depuis Dropbox
+const MODEL_URL = 'https://dl.dropboxusercontent.com/scl/fi/5x1di5kjnapu7mu1ecrl7/Super8-final-01.glb?rlkey=tlvfx1qw7p2y5lha8d391e484&st=vv7bi4is&dl=1';
 const loader = new GLTFLoader();
 let model;
 
-loader.load("./models/Super8-final-01.glb", (gltf) => {
+loader.load(MODEL_URL, (gltf) => {
   model = gltf.scene;
   
   // Ajuster l'échelle et la position initiale du modèle
