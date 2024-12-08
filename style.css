@@ -136,14 +136,7 @@ section {
   font-size: 2rem;
   color: var(--headline-color);
 }
-#section-studio {
-  height: 100vh; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  color: var(--headline-color);
-}
+
 
 #section-concert {
   height: 100vh; 
