@@ -5,19 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!video || !container) return;
 
     // Configuration
-    const maxRotation = 15; // Degrés de rotation maximum
-    const maxMovement = 10; // Mouvement en pixels
-    const perspective = 1000; // Profondeur de la perspective
+    const maxRotation = 12; // Réduit légèrement la rotation maximale
+    const maxMovement = 8; // Réduit légèrement le mouvement
+    const perspective = 1000;
     let isHovering = false;
     let rafId = null;
     let currentRotateX = 0;
     let currentRotateY = 0;
     let currentTranslateX = 0;
     let currentTranslateY = 0;
-    const easing = 0.1; // Facteur de lissage
+    const easing = 0.05; // Réduit l'easing pour une transition plus douce
 
-    // Fonction pour une animation fluide
-    const lerp = (start, end, factor) => start + (end - start) * factor;
+    // Fonction d'interpolation cubique pour un mouvement plus naturel
+    const cubicEasing = (t) => t * t * (3 - 2 * t);
+
+    // Fonction pour une animation fluide avec easing cubique
+    const lerp = (start, end, factor) => {
+        const ease = cubicEasing(factor);
+        return start + (end - start) * ease;
+    };
 
     const animate = () => {
         if (!isHovering) return;
@@ -26,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mouseX = (event.clientX - rect.left) / rect.width - 0.5;
         const mouseY = (event.clientY - rect.top) / rect.height - 0.5;
 
-        // Calcul des rotations et translations cibles
+        // Calcul des rotations et translations cibles avec easing cubique
         const targetRotateY = mouseX * maxRotation;
         const targetRotateX = -mouseY * maxRotation;
         const targetTranslateX = mouseX * maxMovement;
@@ -51,16 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
         rafId = requestAnimationFrame(animate);
     };
 
-    // Gestionnaires d'événements pour le hover
+    // Gestionnaires d'événements pour le hover avec transitions douces
     container.addEventListener('mouseenter', (e) => {
         isHovering = true;
-        event = e; // Stocke l'événement pour l'animation
-        video.style.transition = 'none';
+        event = e;
+        video.style.transition = 'transform 0.2s ease-out'; // Transition douce à l'entrée
         rafId = requestAnimationFrame(animate);
     });
 
     container.addEventListener('mousemove', (e) => {
-        event = e; // Met à jour l'événement pour l'animation
+        event = e;
     });
 
     container.addEventListener('mouseleave', () => {
@@ -68,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rafId) {
             cancelAnimationFrame(rafId);
         }
-        video.style.transition = 'transform 0.5s ease-out';
+        video.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)'; // Transition plus douce à la sortie
         video.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0) scale3d(1, 1, 1)';
         currentRotateX = currentRotateY = currentTranslateX = currentTranslateY = 0;
     });
