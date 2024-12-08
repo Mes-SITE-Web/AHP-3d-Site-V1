@@ -126,8 +126,9 @@ roughnessMap.wrapS = roughnessMap.wrapT = THREE.RepeatWrapping;
 normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
 
 // ---------- ⥥ MODEL ⥥ ----------
-// Charger le modèle depuis Dropbox
-const MODEL_URL = 'https://dl.dropboxusercontent.com/scl/fi/5x1di5kjnapu7mu1ecrl7/Super8-final-01.glb?rlkey=tlvfx1qw7p2y5lha8d391e484&st=vv7bi4is&dl=1';
+// URL du modèle local
+const MODEL_URL = './models-optimized/Super8-final-01-compressed.glb';
+
 const loader = new GLTFLoader();
 let model;
 
@@ -180,6 +181,15 @@ loader.load(MODEL_URL, (gltf) => {
   });
 
   scene.add(model);
+}, 
+// Ajouter le gestionnaire de progression
+(progress) => {
+  const percentComplete = (progress.loaded / progress.total) * 100;
+  console.log('Chargement du modèle: ' + Math.round(percentComplete) + '%');
+},
+// Gestionnaire d'erreur
+(error) => {
+  console.error('Erreur lors du chargement du modèle:', error);
 });
 
 // ---------- ⥥ ANIMATIONS DE PARALLAXE ⥥ ----------
