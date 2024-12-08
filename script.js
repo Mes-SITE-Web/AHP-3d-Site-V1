@@ -78,7 +78,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 // EXPOSITION HDRI ⥥
-renderer.toneMappingExposure = 0.5;
+renderer.toneMappingExposure = 0.8;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verre
 renderer.shadowMap.enabled = true;
@@ -168,7 +168,7 @@ loader.load(MODEL_URL,
     model = gltf.scene;
     
     // Ajuster l'échelle et la position initiale du modèle
-    model.scale.set(1.5, 1.5, 1.5);
+    model.scale.set(1.8, 1.8, 1.8);
     model.position.set(0, -0.5, 0);
     model.rotation.set(0, 0, 0);
 
