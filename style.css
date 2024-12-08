@@ -101,7 +101,8 @@ body {
   color: #eeeeee;
 }
 
-.menu-item:hover .text-wrapper {
+.menu-item:hover .text-wrapper,
+.menu-item.active .text-wrapper {
   transform: translateY(-100%);
 }
 

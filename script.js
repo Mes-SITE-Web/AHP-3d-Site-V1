@@ -422,6 +422,35 @@ const scrollBtn = document.getElementById('scroll-btn');
 logoBtn.addEventListener('click', smoothScrollToTop);
 scrollBtn.addEventListener('click', smoothScrollToSection2);
 
+// ---------- ⥥ SECTION ACTIVE DANS LE MENU ⥥ ----------
+function setActiveSection() {
+  const sections = document.querySelectorAll('section');
+  const menuItems = document.querySelectorAll('.menu-item');
+  
+  // Obtenir la position actuelle du scroll
+  const currentPos = window.scrollY;
+  
+  // Trouver la section active
+  sections.forEach((section, index) => {
+    const sectionTop = section.offsetTop - 100; // offset de 100px pour une meilleure détection
+    const sectionBottom = sectionTop + section.offsetHeight;
+    
+    if (currentPos >= sectionTop && currentPos < sectionBottom) {
+      // Retirer la classe active de tous les items
+      menuItems.forEach(item => item.classList.remove('active'));
+      
+      // Ajouter la classe active à l'item correspondant
+      menuItems[index].classList.add('active');
+    }
+  });
+}
+
+// Écouter l'événement de scroll
+window.addEventListener('scroll', setActiveSection);
+
+// Appeler la fonction au chargement de la page
+document.addEventListener('DOMContentLoaded', setActiveSection);
+
 // ---------- ⥥ REDIMENSIONNEMENT ⥥ ----------
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
