@@ -1,6 +1,7 @@
 // ---------- ⥥ IMPORT ⥥ ----------
 import * as THREE from "https://cdn.skypack.dev/three@0.124.0";
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.124.0/examples/jsm/loaders/RGBELoader.js";
 
 // ---------- ⥥ CANVAS ⥥ ----------
@@ -129,68 +130,117 @@ normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
 // URL du modèle local
 const MODEL_URL = './models-optimized/Super8-final-01-compressed.glb';
 
+// Configuration du DRACOLoader
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/'); // Utiliser le décodeur hébergé par Google
+dracoLoader.setDecoderConfig({ type: 'js' }); // Utiliser la version JavaScript du décodeur
+
+// Configuration du GLTFLoader avec Draco
 const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+
 let model;
+let startTime = null;
+// Durée totale de l'animation de chargement
+const animationDuration = 5000; // 5 secondes pour l'animation complète
 
-loader.load(MODEL_URL, (gltf) => {
-  model = gltf.scene;
-  
-  // Ajuster l'échelle et la position initiale du modèle
-  model.scale.set(1.5, 1.5, 1.5);
-  model.position.set(0, -0.5, 0);
-  model.rotation.set(0, 0, 0);
+// Variables pour le loader
+const minLoaderDuration = 5000; // 5 secondes exactement
+let loaderStartTime = null;
+let currentProgress = 0;
 
-  // Ajuster la rotation initiale pour que l'objectif soit bien orienté
-  model.rotation.x = Math.PI * 0.1;
+// Utiliser le loader existant au lieu d'en créer un nouveau
+const loaderElement = document.getElementById('loader');
+const loaderText = loaderElement.querySelector('.percentage');
 
-  model.traverse((child) => {
-    if (child.isMesh) {
-      // Vérifier si c'est la lentille
-      if (child.name === "Lentille") {
-        // Configuration avancée pour le verre
-        const material = new THREE.MeshPhysicalMaterial({
-          color: new THREE.Color(0.0, 0.0, 0.0),  // Couleur noire
-          roughness: 0,                         // Augmenter la rugosité de base
-          metalness: 0,                           // Pas de métal
-          transparent: true,
-          opacity: 0.8,                          // Contrôle de la transparence
-          clearcoat: 0.8,                          // Effet verre
-          side: THREE.DoubleSide,
-          roughnessMap: roughnessMap,            // Texture pour les rayures
-          normalMap: normalMap,                  // Texture pour le relief
-          normalScale: new THREE.Vector2(0.05, 0.05)   // Augmenter l'intensité du relief
-        });
-
-        // Appliquer le nouveau matériau
-        child.material = material;
-      } else {
-        // Pour les autres matériaux
-        child.material.envMapIntensity = 0.1;
-      }
-
-      // Paramètres communs
-      child.material.needsUpdate = true;
-      child.castShadow = true;
-      child.receiveShadow = true;
-      
-      // Optimisation des textures
-      if (child.material.map) {
-        child.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      }
+// Fonction pour mettre à jour le loader
+function updateLoader(progress) {
+    loaderText.textContent = `${Math.floor(progress)}%`;
+    const progressFill = loaderElement.querySelector('.progress-fill');
+    if (progressFill) {
+        progressFill.style.width = `${progress}%`;
     }
-  });
+}
 
-  scene.add(model);
-}, 
-// Ajouter le gestionnaire de progression
-(progress) => {
-  const percentComplete = (progress.loaded / progress.total) * 100;
-  console.log('Chargement du modèle: ' + Math.round(percentComplete) + '%');
-},
-// Gestionnaire d'erreur
-(error) => {
-  console.error('Erreur lors du chargement du modèle:', error);
-});
+loader.load(MODEL_URL, 
+  // Fonction de succès
+  (gltf) => {
+    model = gltf.scene;
+    
+    // Ajuster l'échelle et la position initiale du modèle
+    model.scale.set(1.5, 1.5, 1.5);
+    model.position.set(0, -0.5, 0);
+    model.rotation.set(0, 0, 0);
+
+    // Ajuster la rotation initiale pour que l'objectif soit bien orienté
+    model.rotation.x = Math.PI * 0.1;
+
+    model.traverse((child) => {
+      if (child.isMesh) {
+        // Vérifier si c'est la lentille
+        if (child.name === "Lentille") {
+          // Configuration avancée pour le verre
+          const material = new THREE.MeshPhysicalMaterial({
+            color: new THREE.Color(0.0, 0.0, 0.0),  // Couleur noire
+            roughness: 1,                         // Augmenter la rugosité de base
+            metalness: 0,                           // Pas de métal
+            transparent: true,
+            opacity: 0.8,                          // Contrôle de la transparence
+            clearcoat: 1,                          // Effet verre
+            side: THREE.DoubleSide,
+            roughnessMap: roughnessMap,            // Texture pour les rayures
+            normalMap: normalMap,                  // Texture pour le relief
+            normalScale: new THREE.Vector2(0.05, 0.05)   // Augmenter l'intensité du relief
+          });
+
+          // Appliquer le nouveau matériau
+          child.material = material;
+        } else {
+          // Pour les autres matériaux
+          child.material.envMapIntensity = 0.1;
+        }
+
+        // Paramètres communs
+        child.material.needsUpdate = true;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        
+        // Optimisation des textures
+        if (child.material.map) {
+          child.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        }
+      }
+    });
+
+    scene.add(model);
+
+    // Attendre que l'animation atteigne 100% avant de masquer
+    const elapsedTime = Date.now() - loaderStartTime;
+    const remainingTime = Math.max(0, minLoaderDuration - elapsedTime);
+
+    setTimeout(() => {
+      updateLoader(100); // Assurer que nous sommes à 100%
+      // Masquer le loader avec la transition CSS
+      loaderElement.style.opacity = '0';
+      setTimeout(() => {
+        loaderElement.style.display = 'none';
+      }, 500); // Transition de disparition de 0.5 seconde
+    }, remainingTime);
+  },
+  // Gestionnaire de progression
+  (xhr) => {
+    if (!loaderStartTime) loaderStartTime = Date.now();
+    
+    const elapsedTime = Date.now() - loaderStartTime;
+    const progress = Math.min((elapsedTime / minLoaderDuration) * 100, 100);
+    
+    updateLoader(progress);
+  },
+  // Gestionnaire d'erreur
+  (error) => {
+    console.error('Erreur lors du chargement du modèle:', error);
+  }
+);
 
 // ---------- ⥥ ANIMATIONS DE PARALLAXE ⥥ ----------
 let mouseX = 0;
