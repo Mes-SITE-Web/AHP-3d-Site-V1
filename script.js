@@ -25,15 +25,15 @@ const group = new THREE.Group();
 scene.add(group);
 
 // Lumières
-const ambientLight = new THREE.AmbientLight(0xdbdbdb, 0.1);
+const ambientLight = new THREE.AmbientLight(0xdbdbdb, 4);
 scene.add(ambientLight);
 
-const pointlight1 = new THREE.PointLight(0x8376eb, 4, 0);
-pointlight1.position.set(0, 3, 2);
+const pointlight1 = new THREE.PointLight(0x8376eb, 7, 0);
+pointlight1.position.set(0, 2, 0);
 group.add(pointlight1);
 
 const pointlight2 = new THREE.PointLight(0xf35d5d, 3, 0);
-pointlight2.position.set(1, 4, 2);
+pointlight2.position.set(0, 2, 2);
 group.add(pointlight2);
 
 // ---------- ⥥ SIZES ⥥ ----------
@@ -78,7 +78,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 // EXPOSITION HDRI ⥥
-renderer.toneMappingExposure = 3;
+renderer.toneMappingExposure = 0.5;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true; // Ajout pour un meilleur rendu du verre
 renderer.shadowMap.enabled = true;
