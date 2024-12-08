@@ -370,8 +370,9 @@ window.addEventListener("scroll", () => {
   }
 });
 
-// Fonction de défilement optimisée
-function smoothScroll(targetPosition, duration = 500) {  
+// ---------- ⥥ SMOOTH SCROLL ⥥ ----------
+function smoothScroll(target, duration = 1000) {
+  const targetPosition = document.querySelector(target).offsetTop;
   const startPosition = window.pageYOffset;
   const distance = targetPosition - startPosition;
   let startTime = null;
@@ -379,30 +380,39 @@ function smoothScroll(targetPosition, duration = 500) {
   function animation(currentTime) {
     if (startTime === null) startTime = currentTime;
     const timeElapsed = currentTime - startTime;
-    const progress = Math.min(timeElapsed / duration, 1);
-    
-    // Fonction d'easing plus rapide
-    const easeOutQuart = progress => 1 - Math.pow(1 - progress, 4);
+    const run = ease(timeElapsed, startPosition, distance, duration);
+    window.scrollTo(0, run);
+    if (timeElapsed < duration) requestAnimationFrame(animation);
+  }
 
-    window.scrollTo(0, startPosition + (distance * easeOutQuart(progress)));
-
-    if (timeElapsed < duration) {
-      requestAnimationFrame(animation);
-    }
+  // Fonction d'easing pour une animation plus naturelle
+  function ease(t, b, c, d) {
+    t /= d / 2;
+    if (t < 1) return c / 2 * t * t + b;
+    t--;
+    return -c / 2 * (t * (t - 2) - 1) + b;
   }
 
   requestAnimationFrame(animation);
 }
 
-// Fonction de défilement vers le haut optimisée
+// Ajouter les événements de clic pour chaque lien du menu
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = this.getAttribute('href');
+    smoothScroll(target);
+  });
+});
+
+// Fonction de défilement optimisée
 function smoothScrollToTop() {
-  smoothScroll(0);
+  smoothScroll('#top');
 }
 
 // Fonction de défilement vers la section 2 optimisée
 function smoothScrollToSection2() {
-  const section2 = document.getElementById('section-2');
-  smoothScroll(section2.offsetTop);
+  smoothScroll('#section-2');
 }
 
 // Sélectionner les éléments et ajouter les événements
