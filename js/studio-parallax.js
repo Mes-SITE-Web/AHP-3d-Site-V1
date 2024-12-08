@@ -9,57 +9,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxMovement = 10; // Mouvement en pixels
     const perspective = 1000; // Profondeur de la perspective
     let isHovering = false;
+    let rafId = null;
+    let currentRotateX = 0;
+    let currentRotateY = 0;
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+    const easing = 0.1; // Facteur de lissage
 
-    // Fonction throttle
-    const throttle = (callback, limit) => {
-        let waiting = false;
-        return function () {
-            if (!waiting) {
-                callback.apply(this, arguments);
-                waiting = true;
-                setTimeout(() => {
-                    waiting = false;
-                }, limit);
-            }
-        };
-    };
+    // Fonction pour une animation fluide
+    const lerp = (start, end, factor) => start + (end - start) * factor;
 
-    // Gestionnaire de mouvement avec effet 3D
-    const handleMouseMove = throttle((e) => {
+    const animate = () => {
         if (!isHovering) return;
 
         const rect = container.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
-        const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+        const mouseX = (event.clientX - rect.left) / rect.width - 0.5;
+        const mouseY = (event.clientY - rect.top) / rect.height - 0.5;
 
-        // Calcul des rotations et translations
-        const rotateY = mouseX * maxRotation;
-        const rotateX = -mouseY * maxRotation;
-        const translateX = mouseX * maxMovement;
-        const translateY = mouseY * maxMovement;
+        // Calcul des rotations et translations cibles
+        const targetRotateY = mouseX * maxRotation;
+        const targetRotateX = -mouseY * maxRotation;
+        const targetTranslateX = mouseX * maxMovement;
+        const targetTranslateY = mouseY * maxMovement;
+
+        // Animation fluide
+        currentRotateX = lerp(currentRotateX, targetRotateX, easing);
+        currentRotateY = lerp(currentRotateY, targetRotateY, easing);
+        currentTranslateX = lerp(currentTranslateX, targetTranslateX, easing);
+        currentTranslateY = lerp(currentTranslateY, targetTranslateY, easing);
 
         // Application des transformations avec effet 3D
         video.style.transform = `
             perspective(${perspective}px)
-            rotateX(${rotateX}deg)
-            rotateY(${rotateY}deg)
-            translateX(${translateX}px)
-            translateY(${translateY}px)
+            rotateX(${currentRotateX}deg)
+            rotateY(${currentRotateY}deg)
+            translateX(${currentTranslateX}px)
+            translateY(${currentTranslateY}px)
             scale3d(1.05, 1.05, 1.05)
         `;
-    }, 16);
+
+        rafId = requestAnimationFrame(animate);
+    };
 
     // Gestionnaires d'événements pour le hover
-    container.addEventListener('mouseenter', () => {
+    container.addEventListener('mouseenter', (e) => {
         isHovering = true;
-        video.style.transition = 'transform 0.2s ease-out';
+        event = e; // Stocke l'événement pour l'animation
+        video.style.transition = 'none';
+        rafId = requestAnimationFrame(animate);
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        event = e; // Met à jour l'événement pour l'animation
     });
 
     container.addEventListener('mouseleave', () => {
         isHovering = false;
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+        }
         video.style.transition = 'transform 0.5s ease-out';
         video.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0) scale3d(1, 1, 1)';
+        currentRotateX = currentRotateY = currentTranslateX = currentTranslateY = 0;
     });
-
-    container.addEventListener('mousemove', handleMouseMove);
 });

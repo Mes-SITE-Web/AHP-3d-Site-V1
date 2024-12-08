@@ -1,32 +1,73 @@
 #section-studio {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 2rem;
-    color: var(--headline-color);
+    justify-content: center;
+    padding: 0;
+    background-color: var(--bg-color);
 }
 
 .studio-content {
     width: 100%;
-    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    gap: 2rem;
+    align-items: flex-start;
     padding: 0 5%;
 }
 
 .studio-text {
     flex: 1;
     text-align: left;
-    padding-right: 4rem;
-    max-height: 450px; /* Hauteur maximale */
-    overflow-y: auto; /* Ajoute un scroll si nécessaire */
-    scrollbar-width: thin; /* Pour Firefox */
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* Pour Firefox */
+    padding-right: 2rem;
+    max-height: 450px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s ease-out;
 }
 
-/* Style de la scrollbar pour Chrome/Safari */
+.studio-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--headline-color);
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease-out;
+}
+
+.studio-text h2::after {
+    display: none;
+}
+
+.studio-text p {
+    font-size: 1rem;
+    line-height: 1.5;
+    width: 600px;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 0;
+}
+
+.studio-video-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-out;
+}
+
 .studio-text::-webkit-scrollbar {
     width: 6px;
 }
@@ -40,43 +81,40 @@
     border-radius: 3px;
 }
 
-.studio-text h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: var(--headline-color);
-    font-weight: bold;
+/* Animation triggers */
+.section-2-studio.animate-in .studio-text,
+.section-2-studio.animate-in .studio-video-container {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-.studio-text p {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-    opacity: 0.9;
+.section-2-studio.animate-in .studio-text h2 {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.studio-text p:last-child {
-    margin-bottom: 0;
+.section-2-studio.animate-in .studio-text p {
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
-p {
-    width: 600px;
+.section-2-studio.animate-in .studio-text p:nth-child(2) { animation-delay: 0.3s; }
+.section-2-studio.animate-in .studio-text p:nth-child(3) { animation-delay: 0.6s; }
+.section-2-studio.animate-in .studio-text p:nth-child(4) { animation-delay: 0.9s; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 0.9;
+        transform: translateY(0);
+    }
 }
 
-.studio-video-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    perspective: 1000px;
-    transform-style: preserve-3d;
-}
-
+/* Styles de la vidéo */
 .studio-video {
-    width: 110%;
+    width: 100%;
     max-width: 660px;
     height: auto;
     border-radius: 5px;
@@ -91,15 +129,16 @@ p {
 @media screen and (max-width: 768px) {
     .studio-content {
         flex-direction: column;
-        padding: 20px;
+        padding: 1rem;
     }
 
     .studio-text {
-        margin-bottom: 20px;
-        text-align: center;
+        padding-right: 1rem;
+        max-height: none;
     }
 
     .studio-video {
+        width: 100%;
         max-width: 100%;
     }
 }
